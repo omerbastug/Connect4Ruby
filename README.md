@@ -11,3 +11,5 @@ Simple Connect4 game played on terminal
 
 3. Run the program \
     run "ruby playGame.rb
+    
+![image](https://user-images.githubusercontent.com/92021842/198656791-fe15eebc-0bb9-4acf-b212-a0a72bcc33c1.png)
