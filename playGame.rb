@@ -163,7 +163,7 @@ class PlayGame
     def play()
         @movesRed = @movesRed==nil ? Array.new : @movesRed
         @movesBlue = @movesBlue==nil ? Array.new : @movesBlue
-        while @game.winner == nil
+        while @game.winner == nil and !@game.gameended
             self.displayCurrent
 
             puts "Enter 'back' to return to main menu"

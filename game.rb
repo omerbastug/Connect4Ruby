@@ -9,7 +9,7 @@ $db = DB.getDatabase
 $gametoSavetoFile = { :game => {:row => nil, :col => nil, :startingturn => nil}, :moves => Array.new }
 
 class Game
-    attr_accessor :id, :row, :col, :name,:turn, :winner, :matrix, :lastmove, :replay
+    attr_accessor :id, :row, :col, :name,:turn, :winner, :matrix, :lastmove, :replay, :gameended
     BLUE = 1;
     RED = 0;
     def initialize(row = 6, col = 7,turn = nil, id = nil, win = nil,replay = false)
@@ -25,7 +25,7 @@ class Game
         @turn = turn || rand(RED..BLUE)
         @id = id
         @replay = replay
-
+        @gameended = false
         if @id != nil then
             return
         end
@@ -91,9 +91,30 @@ class Game
         # CHECK WIN
         self.checkWin(i,col)
         self.changeTurn
-
+        self.checkEnded
     end
-
+    def checkEnded
+        ended = !matrix[0].include?(nil)
+        if !ended then 
+            return
+        end
+        @gameended = ended
+        puts "\e[H\e[2J"
+        @winner = "neutral"
+        $db.execute("UPDATE games SET winner = ? WHERE game_id = ?",[@winner,@id])
+        puts "No one wins"
+        str = ""
+        0.upto(@row-1) do |i|
+            str += "|"
+            0.upto(@col-1) do |j|
+                circle = @matrix[i][j] == nil ? "⬤".light_black : (@matrix[i][j] == BLUE ? "⬤".blue : "⬤".red)
+                str += " " + circle + "  |"
+            end
+            str += "\n"
+        end
+        str += "‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾"
+        puts str
+    end
     def checkWin(i,j)
         vwin = WinCheck.vertical(self.matrix,i,j)
         if vwin != nil then
